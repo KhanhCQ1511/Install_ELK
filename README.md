@@ -39,6 +39,12 @@
 # Step #3: Configure ElasticSearch on Ubuntu 24.04 LTS
 	
 	sudo nano /etc/elasticsearch/elasticsearch.yml
+
+ 		network.host: 0.0.0.0
+
+   		discovvery.seed_hosts: []
+
+     		xpack.security.enabled: false
 	
 	sudo systemctl restart elasticsearch
 	
@@ -65,7 +71,13 @@
 # Step #6: Configure Kibana on Ubuntu 24.04 LTS
 
 	sudo nano /etc/kibana/kibana.yml
-	
+
+		server.port: 5601
+
+  		server.host: "0.0.0.0"
+
+    		elasticsearch.hosts: ["https://localhost:9200"]
+   	
 	sudo systemctl restart kibana
 	
 # Step #7: Install Filebeat on Ubuntu 24.04 LTS
@@ -73,7 +85,15 @@
 	sudo apt-get install filebeat
 	
 	sudo nano /etc/filebeat/filebeat.yml
-	
+
+  		Comment: #output.elasticsearch:
+    				# Array of hosts to connect to.
+				# hosts: ["localhost:9200"]
+
+      		Delete comment: output.logstash:
+					# The logstash hosts
+					hosts: ["localhost:5044"]
+ 
 	sudo filebeat modules enable system
 	
 	sudo filebeat setup --index-management -E ouput.logstash.enabled=false -E 'output.elasticsearch.hosts=["0.0.0.0:9200"]'
@@ -82,4 +102,7 @@
 	sudo systemctl enable filebeat
 	
 	curl  -XGET  "localhost:9200/_cat/indices?v"
-	
+
+# Step #8: Try in browser
+
+ 	Put "localhost:5601" in browser
